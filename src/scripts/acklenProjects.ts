@@ -38,34 +38,31 @@
 
 function AcklenProjects(robot: any) {
 
-  var projectDetail ={
-    ProjectWall: {
-      Active: true,
-      Detail: 'This is a brief of ProjectWall',
-      Current Sprint: 11,
-      Developers: {'Frank','Douglas P', 'Aida', 'Viktor'},
-      Scrum Master: {'Rene'},
-      QAs: {'Elder', 'Dorian'},
-      Trello: 'https://trello.com/b/PYGBctHp/projectwall',
-      Github: 'https://github.com/AcklenAvenue/ProjectWall',
-      Appveyor: 'https://ci.appveyor.com/project/bsommardahl/projectwall',
-      Environments: [
-        {Dev: 'projectwalldev.azurewebsites.net'},
-        {Staging: 'projectwalldev.azurewebsites.net'},
-        {Production: 'http://projectwall.net/'}]
-    },
-    CaredFor:{},
-    Maxor: {}
-  }
-
-  robot.respond(/(.*) detail/i, (msg: any) => {
-    var projectName = msg.match[0];
-
-    msg.reply('Howdy!')
+  var projects =[];
+  var _ = require('underscore');
+ robot.respond(/create project notes (.*)/i, (msg: any) => {
+    var projectName = msg.match[1];
+    var myjson = {'projectname': projectName };
+    projects.push(myjson);
+   msg.reply(JSON.stringify(projects));
+    msg.reply('project notes created')
   })
 
-  robot.hear(/howdy/i, (msg: any) => {
-    msg.send('Hola!')
+  robot.respond(/add (.*) to (.*) with (.*)/i, (msg: any) => {
+    var variableName: string = msg.match[1];
+    var projectName: string  = msg.match[2];
+
+    var value: string = msg.match[3];
+
+    _.each(projects, function(p){
+      if(p.projectname === projectName)
+      {
+        p[variableName] = value;
+      }
+    })
+
+    msg.reply(JSON.stringify(projects));
+    msg.reply(variableName + ' added to ' + projectName);
   })
 }
 
