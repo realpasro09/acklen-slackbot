@@ -38,32 +38,44 @@
 
 function AcklenProjects(robot: any) {
 
-  var projects =[];
-  var _ = require('underscore');
- robot.respond(/create project notes (.*)/i, (msg: any) => {
-    var projectName = msg.match[1];
-    var myjson = {'projectname': projectName };
-    projects.push(myjson);
-   msg.reply(JSON.stringify(projects));
-    msg.reply('project notes created')
-  })
+    // var projects = [];
+    var fs = require('fs');
+    var _ = require('underscore');
 
-  robot.respond(/add (.*) to (.*) with (.*)/i, (msg: any) => {
-    var variableName: string = msg.match[1];
-    var projectName: string  = msg.match[2];
+    var projects = JSON.parse(fs.readFileSync('project.json', 'utf8'));
 
-    var value: string = msg.match[3];
 
-    _.each(projects, function(p){
-      if(p.projectname === projectName)
-      {
-        p[variableName] = value;
-      }
+    robot.respond(/create project notes (.*)/i, (msg: any) => {
+        var projectName = msg.match[1];
+
+        var myjson = { 'projectname': projectName };
+        projects.push(myjson);
+
+        fs.writeFile('project.json', JSON.stringify(projects));
+
+        msg.reply(JSON.stringify(projects));
+        msg.reply('project notes created')
     })
 
-    msg.reply(JSON.stringify(projects));
-    msg.reply(variableName + ' added to ' + projectName);
-  })
+    robot.respond(/add (.*) to (.*) with (.*)/i, (msg: any) => {
+
+        var objects = JSON.parse(fs.readFileSync('project.json', 'utf8'));
+
+        var variableName: string = msg.match[1];
+        var projectName: string = msg.match[2];
+
+        var value: string = msg.match[3];
+
+        _.each(projects, function(p) {
+            if (p.projectname === projectName) {
+                p[variableName] = value;
+            }
+        })
+
+        fs.writeFile('project.json', JSON.stringify(projects));
+
+        msg.reply(variableName + ' added to ' + projectName);
+    })
 }
 
 export = AcklenProjects;

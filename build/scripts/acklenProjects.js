@@ -36,43 +36,30 @@
 //   Rene Rosa <realpasro09@hotmail.com>
 //   Frank Rodriguez <frankhn0801@gmail.com>
 function AcklenProjects(robot) {
-    var projects = [];
+    // var projects = [];
+    var fs = require('fs');
     var _ = require('underscore');
-    robot.respond(/create new project notes (.*)/i, function (msg) {
+    var projects = JSON.parse(fs.readFileSync('project.json', 'utf8'));
+    robot.respond(/create project notes (.*)/i, function (msg) {
         var projectName = msg.match[1];
         var myjson = { 'projectname': projectName };
         projects.push(myjson);
+        fs.writeFile('project.json', JSON.stringify(projects));
         msg.reply(JSON.stringify(projects));
         msg.reply('project notes created');
     });
     robot.respond(/add (.*) to (.*) with (.*)/i, function (msg) {
+        var objects = JSON.parse(fs.readFileSync('project.json', 'utf8'));
         var variableName = msg.match[1];
         var projectName = msg.match[2];
         var value = msg.match[3];
-        //    var project = _.filter(projects, function(p){
-        //
-        //      return p.projectname === projectName;
-        //    })
         _.each(projects, function (p) {
             if (p.projectname === projectName) {
-                console.log(p.projectName);
-                console.log(variableName);
                 p[variableName] = value;
             }
         });
-        //    projects.push(myjson);
-        msg.reply(JSON.stringify(projects));
-        //    msg.reply('project notes created');
+        fs.writeFile('project.json', JSON.stringify(projects));
+        msg.reply(variableName + ' added to ' + projectName);
     });
-    //  robot.respond(/(.*) detail/i, (msg: any) => {
-    //    var projectName = msg.match[0];
-    //    //#1 R/= Projectwall
-    //    msg.reply('Howdy!')
-    //  })
-    //
-    //  robot.hear(/howdy/i, (msg: any) => {
-    //    msg.send('Hola!')
-    //    //
-    //
 }
 module.exports = AcklenProjects;

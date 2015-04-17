@@ -1,8 +1,1 @@
-[
-  {
-    projectname: 'projectwall'
-  },
-  {
-    projectname: 'hola'
-  }
-]
+[{},{"projectname":"test","duration":"10"},{"projectname":"prueba"},{"projectname":"none"}]
